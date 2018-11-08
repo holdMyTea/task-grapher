@@ -5,6 +5,7 @@ import { Stage, Layer } from 'react-konva'
 
 import { addNode, addLevel } from '../actions/Board'
 import Level from '../components/Level'
+import PlusSign from '../components/PlusSign'
 
 class Board extends React.Component {
   constructor () {
@@ -23,6 +24,7 @@ class Board extends React.Component {
               <Level points={level} index={index} key={index} />
             ))
           }
+          <PlusSign offsetX={480} offsetY={this.props.Board.length * 100 + 20}/>
         </Layer>
       </Stage>
     )
