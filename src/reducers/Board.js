@@ -1,31 +1,18 @@
 import { ADD_NODE, ADD_LEVEL } from '../actions/Board'
 
-const blankLevel = {
-  points: [{
-    id: 0,
-    connections: []
-  }]
-}
+const blankLevel = [[], []] // level is array of points, which are just arrays of connections
 
-const initialState = {
-  levels: [blankLevel]
-}
+const initialState = [blankLevel] // board state is just array of levels, so baiscally it's a [[[]]]
 
 export default function (
   state = initialState, action
 ) {
   switch (action.type) {
     case ADD_NODE:
-      const newState = {...state}
-      newState.levels[action.levelId].points.push({
-        id: state.levels[action.levelId].points.length,
-        connections: []
-      })
-
-      return newState
+      return state
 
     case ADD_LEVEL:
-      return {...state, levels: {...state.levels, blankLevel}}
+      return state
 
     default: return state
   }

@@ -1,16 +1,28 @@
 import React from 'react'
 import { connect } from 'react-redux'
-import Konva from 'konva'
-import { Stage, Layer, Circle } from 'react-konva'
+import PropTypes from 'prop-types'
+import { Stage, Layer } from 'react-konva'
 
 import { addNode, addLevel } from '../actions/Board'
+import Level from '../components/Level'
 
 class Board extends React.Component {
+  constructor () {
+    super()
+    this.state = {
+      clicked: false
+    }
+  }
+
   render () {
     return (
-      <Stage width={window.innerWidth} height={window.innerHeight}>
+      <Stage width={window.innerWidth} height={window.innerHeight} ref={ref => (this.stageRef = ref)}>
         <Layer>
-          <Circle x={200} y={100} radius={50} fill="green" />
+          {
+            this.props.Board.map((level, index) => (
+              <Level points={level} index={index} key={index} />
+            ))
+          }
         </Layer>
       </Stage>
     )
@@ -26,6 +38,14 @@ const mapDispatchToProps = dispatch => {
     addNode: (levelId) => dispatch(addNode(levelId)),
     addLevel: () => dispatch(addLevel)
   }
+}
+
+Board.propTypes = {
+  Board: PropTypes.arrayOf(
+    PropTypes.arrayOf(
+      PropTypes.array // for upcoming connections
+    )
+  )
 }
 
 export default connect(
