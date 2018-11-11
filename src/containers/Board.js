@@ -3,28 +3,26 @@ import { connect } from 'react-redux'
 import PropTypes from 'prop-types'
 import { Stage, Layer } from 'react-konva'
 
-import { addNode, addLevel } from '../actions/Board'
+import { addNode, addLevel } from '../actions'
 import Level from '../components/Level'
 import PlusSign from '../components/PlusSign'
 
 class Board extends React.Component {
-  constructor () {
-    super()
-    this.state = {
-      clicked: false
-    }
-  }
-
   render () {
+    console.log('Board render called')
     return (
       <Stage width={window.innerWidth} height={window.innerHeight} ref={ref => (this.stageRef = ref)}>
         <Layer>
           {
-            this.props.Board.map((level, index) => (
-              <Level points={level} index={index} key={index} />
+            this.props.board.map((level, index) => (
+              <Level points={level} index={index} key={'lvl' + index}
+                addNode={() => {
+                  this.props.addNode(index)
+                  console.log('Add node on level ' + index)
+                }} />
             ))
           }
-          <PlusSign offsetX={480} offsetY={this.props.Board.length * 100 + 20}/>
+          <PlusSign offsetX={480} offsetY={this.props.board.length * 100 + 20}/>
         </Layer>
       </Stage>
     )
@@ -43,11 +41,15 @@ const mapDispatchToProps = dispatch => {
 }
 
 Board.propTypes = {
-  Board: PropTypes.arrayOf(
+  board: PropTypes.arrayOf(
     PropTypes.arrayOf(
-      PropTypes.array // for upcoming connections
+      PropTypes.shape({
+        weight: PropTypes.number,
+        clicked: PropTypes.bool
+      })
     )
-  )
+  ),
+  addNode: PropTypes.func
 }
 
 export default connect(

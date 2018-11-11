@@ -2,7 +2,7 @@ import React from 'react'
 import PropTypes from 'prop-types'
 import { Shape } from 'react-konva'
 
-const PlusSign = ({offsetX = 0, offsetY = 0}) => {
+const PlusSign = ({offsetX = 0, offsetY = 0, onClick}) => {
   return (
     <Shape
       sceneFunc={(context, shape) => {
@@ -25,13 +25,15 @@ const PlusSign = ({offsetX = 0, offsetY = 0}) => {
       fill="#00D2FF"
       stroke="black"
       strokeWidth={4}
+      onClick={onClick}
     />
   )
 }
 
 PlusSign.propTypes = {
   offsetX: PropTypes.number,
-  offsetY: PropTypes.number
+  offsetY: PropTypes.number,
+  onClick: PropTypes.func
 }
 
 export default PlusSign

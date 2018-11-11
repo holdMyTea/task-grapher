@@ -4,14 +4,14 @@ import { Provider } from 'react-redux'
 import { createStore, applyMiddleware } from 'redux'
 import { createLogger } from 'redux-logger'
 
-import reducers from './reducers'
+import reducer from './reducers'
 import Board from './containers/Board.js'
 import '../public/styles/style.scss'
 
 const loggerMiddleware = createLogger()
 
 const store = createStore(
-  reducers,
+  reducer,
   applyMiddleware(
     loggerMiddleware
   )
