@@ -5,7 +5,7 @@ import { Group, Rect } from 'react-konva'
 import Node from './Node'
 import PlusSign from './PlusSign'
 
-const Level = ({points, index, addNode}) => {
+const Level = ({points, index, onAddNode, onNodeClick}) => {
   return (
     <Group x={0} y={0 + index * 100} height={100} width={1100}>
       <Rect x={0} y={0} height={100} width={1100} stroke='black' strokeWidth={2}/>
@@ -14,11 +14,12 @@ const Level = ({points, index, addNode}) => {
         {
           points.map((node, nodeIndex) => (
             <Node weight={node.weight} clicked={node.clicked} nodeIndex={nodeIndex}
-              key={'nd' + index * 10 + nodeIndex} />
+              key={'nd' + index * 10 + nodeIndex}
+              onClick={() => onNodeClick(nodeIndex)} />
           ))
         }
       </Group>
-      <PlusSign offsetX={1020} offsetY={20} onClick={addNode} />
+      <PlusSign offsetX={1020} offsetY={20} onClick={onAddNode} />
     </Group>
   )
 }
@@ -31,7 +32,8 @@ Level.propTypes = {
     })
   ),
   index: PropTypes.number.isRequired,
-  addNode: PropTypes.func.isRequired
+  onAddNode: PropTypes.func.isRequired,
+  onNodeClick: PropTypes.func.isRequired
 }
 
 export default Level

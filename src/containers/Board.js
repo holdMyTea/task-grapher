@@ -3,7 +3,7 @@ import { connect } from 'react-redux'
 import PropTypes from 'prop-types'
 import { Stage, Layer } from 'react-konva'
 
-import { addNode, addLevel } from '../actions'
+import { addNode, addLevel, clickNode } from '../actions'
 import Level from '../components/Level'
 import PlusSign from '../components/PlusSign'
 
@@ -14,18 +14,21 @@ class Board extends React.Component {
       <Stage width={window.innerWidth} height={window.innerHeight} ref={ref => (this.stageRef = ref)}>
         <Layer>
           {
-            this.props.board.map((level, index) => (
-              <Level points={level} index={index} key={'lvl' + index}
-                addNode={() => {
-                  this.props.addNode(index)
-                  console.log('Add node on level ' + index)
-                }} />
-            ))
+            this.drawNodes()
           }
-          <PlusSign offsetX={480} offsetY={this.props.board.length * 100 + 20}/>
+          <PlusSign offsetX={480} offsetY={this.props.nodes.length * 100 + 20}
+            onClick={this.props.onAddLevel}/>
         </Layer>
       </Stage>
     )
+  }
+
+  drawNodes () {
+    return this.props.nodes.map((level, index) => (
+      <Level points={level} index={index} key={'lvl' + index}
+        onAddNode={() => this.props.onAddNode(index)}
+        onNodeClick={(nodeId) => this.props.onNodeClick(index, nodeId)} />
+    ))
   }
 }
 
@@ -35,13 +38,14 @@ const mapStateToProps = state => {
 
 const mapDispatchToProps = dispatch => {
   return {
-    addNode: (levelId) => dispatch(addNode(levelId)),
-    addLevel: () => dispatch(addLevel)
+    onAddNode: (levelId) => dispatch(addNode(levelId)),
+    onAddLevel: () => dispatch(addLevel()),
+    onNodeClick: (levelId, nodeId) => dispatch(clickNode(levelId, nodeId))
   }
 }
 
 Board.propTypes = {
-  board: PropTypes.arrayOf(
+  nodes: PropTypes.arrayOf(
     PropTypes.arrayOf(
       PropTypes.shape({
         weight: PropTypes.number,
@@ -49,7 +53,9 @@ Board.propTypes = {
       })
     )
   ),
-  addNode: PropTypes.func
+  onAddNode: PropTypes.func.isRequired,
+  onAddLevel: PropTypes.func.isRequired,
+  onNodeClick: PropTypes.func.isRequired
 }
 
 export default connect(
