@@ -19,7 +19,6 @@ export default function (
         nodes: state.nodes.map((level, index) => (
           action.levelId === index
             ? [...state.nodes[action.levelId]].concat([blankNode()])
-            /* used concat() as I needed the value of new array returned */
             : level
         ))
       }
@@ -32,24 +31,80 @@ export default function (
 
     case CLICK_NODE:
       if (state.clicked === undefined) {
-        return {
-          ...state,
-          clicked: {
-            levelId: action.levelId,
-            nodeId: action.nodeId
-          },
-          nodes: state.nodes.map((level, levelIndex) => (
-            action.levelId === levelIndex
-              ? level.map((node, nodeIndex) => (
-                action.nodeId === nodeIndex
-                  ? {...state.nodes[levelIndex][nodeIndex], clicked: true}
-                  : node
-              ))
-              : level
-          ))
-        }
-      } else return {...state, clicked: undefined}
+        return handleFirstClick(state, action)
+      } else return handleSecondClick(state, action)
 
     default: return state
   }
+}
+
+const handleFirstClick = (state, action) => {
+  return {
+    ...state,
+    clicked: {
+      levelId: action.levelId,
+      nodeId: action.nodeId
+    },
+    nodes: setNodeClicked(state, action.levelId, action.nodeId, true)
+  }
+}
+
+const handleSecondClick = (state, action) => {
+  const first = state.clicked
+  const second = {
+    levelId: action.levelId,
+    nodeId: action.nodeId
+  }
+
+  if (first.levelId >= second.levelId) {
+    console.log('Only the levels below!!1')
+    return {
+      ...state,
+      clicked: undefined,
+      nodes: setNodeClicked(state, first.levelId, first.nodeId, false)
+    }
+  } else {
+    if (state.connections.find(element => {
+      return (element.from.levelId === first.levelId) &&
+        (element.from.nodeId === first.nodeId) &&
+        (element.to.levelId === second.levelId) &&
+        (element.to.nodeId === second.nodeId)
+    })) {
+      return {
+        ...state,
+        clicked: undefined,
+        nodes: setNodeClicked(state, first.levelId, first.nodeId, false)
+      }
+    } else {
+      return {
+        ...state,
+        clicked: undefined,
+        nodes: setNodeClicked(state, first.levelId, first.nodeId, false),
+        connections: [...state.connections, {
+          from: first,
+          to: second
+        }]
+      }
+    }
+  }
+}
+
+/** @function setNodeClicked - sets Node's Clicked value and returns updated state.nodes Object
+ * @param {Object} state - current store's state
+ * @param {Number} levelId - levelId of chosen Node
+ * @param {Number} nodeId - nodeId on level of chosen Node
+ * @param {Boolean} value - dsired Clicked value
+ * @returns {Object} - updated state.nodes Object for state
+ */
+const setNodeClicked = (state, levelId, nodeId, value) => {
+  console.log('lvl: ' + levelId + ' nod: ' + nodeId + ' for: ' + value)
+  return state.nodes.map((level, levelIndex) => (
+    levelId === levelIndex
+      ? level.map((node, nodeIndex) => (
+        nodeId === nodeIndex
+          ? {...state.nodes[levelIndex][nodeIndex], clicked: value}
+          : node
+      ))
+      : level
+  ))
 }
