@@ -13,3 +13,8 @@ export const CLICK_NODE = 'CLICK_NODE'
 export const clickNode = (levelId, nodeId) => ({
   levelId, nodeId, type: CLICK_NODE
 })
+
+export const CHANGE_WEIGHT = 'CHANGE_WEIGHT'
+export const changeWeight = (levelId, nodeId, newWeight) => ({
+  levelId, nodeId, newWeight, type: CHANGE_WEIGHT
+})

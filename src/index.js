@@ -6,7 +6,6 @@ import { createLogger } from 'redux-logger'
 
 import reducer from './reducers'
 import Board from './containers/Board.js'
-// import '../public/styles/style.scss'
 
 const loggerMiddleware = createLogger()
 

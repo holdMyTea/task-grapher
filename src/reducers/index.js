@@ -1,4 +1,4 @@
-import { ADD_NODE, ADD_LEVEL, CLICK_NODE } from '../actions'
+import { ADD_NODE, ADD_LEVEL, CLICK_NODE, CHANGE_WEIGHT } from '../actions'
 
 const blankNode = () => ({
   weight: 1,
@@ -36,6 +36,12 @@ export default function (
       return {
         ...state,
         nodes: [...state.nodes, [blankNode()]]
+      }
+
+    case CHANGE_WEIGHT:
+      return {
+        ...state,
+        nodes: setNodeWeight(state, action.levelId, action.nodeId, action.newWeight)
       }
 
     case CLICK_NODE:
@@ -111,6 +117,19 @@ const setNodeClicked = (state, levelId, nodeId, value) => {
       ? level.map((node, nodeIndex) => (
         nodeId === nodeIndex
           ? {...state.nodes[levelIndex][nodeIndex], clicked: value}
+          : node
+      ))
+      : level
+  ))
+}
+
+const setNodeWeight = (state, levelId, nodeId, newWeight) => {
+  console.log('SOOQA')
+  return state.nodes.map((level, levelIndex) => (
+    levelId === levelIndex
+      ? level.map((node, nodeIndex) => (
+        nodeId === nodeIndex
+          ? {...state.nodes[levelIndex][nodeIndex], weight: newWeight}
           : node
       ))
       : level

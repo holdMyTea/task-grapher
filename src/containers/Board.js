@@ -3,7 +3,7 @@ import { connect } from 'react-redux'
 import PropTypes from 'prop-types'
 import { Stage, Layer, Group, Rect } from 'react-konva'
 
-import { addNode, addLevel, clickNode } from '../actions'
+import { addNode, addLevel, clickNode, changeWeight } from '../actions'
 import Level from '../components/Level'
 import PlusSign from '../components/PlusSign'
 import ArrowMap from '../components/Arrows'
@@ -57,8 +57,9 @@ class Board extends React.Component {
     return this.props.nodes.map((level, index) => (
       <Level nodes={level} index={index} key={`lvl-${index}1=`}
         constants={this.state.constants}
-        onAddNode={() => this.props.onAddNode(index)}
-        onNodeClick={(nodeId) => this.props.onNodeClick(index, nodeId)} />
+        onPlusClick={() => this.props.onAddNode(index)}
+        onNodeClick={(nodeId) => this.props.onNodeClick(index, nodeId)}
+        onNodeDoubleClick={(nodeId, newWeight) => this.props.onNodeDoubleClick(index, nodeId, newWeight)} />
     ))
   }
 }
@@ -71,7 +72,8 @@ const mapDispatchToProps = dispatch => {
   return {
     onAddNode: (levelId) => dispatch(addNode(levelId)),
     onAddLevel: () => dispatch(addLevel()),
-    onNodeClick: (levelId, nodeId) => dispatch(clickNode(levelId, nodeId))
+    onNodeClick: (levelId, nodeId) => dispatch(clickNode(levelId, nodeId)),
+    onNodeDoubleClick: (levelId, nodeId, newWeight) => dispatch(changeWeight(levelId, nodeId, newWeight))
   }
 }
 
@@ -98,7 +100,8 @@ Board.propTypes = {
   ),
   onAddNode: PropTypes.func.isRequired,
   onAddLevel: PropTypes.func.isRequired,
-  onNodeClick: PropTypes.func.isRequired
+  onNodeClick: PropTypes.func.isRequired,
+  onNodeDoubleClick: PropTypes.func.isRequired
 }
 
 export default connect(
