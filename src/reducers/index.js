@@ -7,8 +7,17 @@ const blankNode = () => ({
 
 export default function (
   state = {
-    nodes: [[blankNode()]],
-    connections: [],
+    nodes: [[blankNode()], [blankNode()]],
+    connections: [{
+      from: {
+        levelId: 0,
+        nodeId: 0
+      },
+      to: {
+        levelId: 1,
+        nodeId: 0
+      }
+    }],
     clicked: undefined
   }, action
 ) {
@@ -90,14 +99,13 @@ const handleSecondClick = (state, action) => {
 }
 
 /** @function setNodeClicked - sets Node's Clicked value and returns updated state.nodes Object
- * @param {Object} state - current store's state
- * @param {Number} levelId - levelId of chosen Node
- * @param {Number} nodeId - nodeId on level of chosen Node
- * @param {Boolean} value - dsired Clicked value
- * @returns {Object} - updated state.nodes Object for state
+ * @param {Object} state current store's state
+ * @param {Number} levelId levelId of chosen Node
+ * @param {Number} nodeId nodeId on level of chosen Node
+ * @param {Boolean} value desired Clicked value
+ * @returns {Object} updated state.nodes Object for state
  */
 const setNodeClicked = (state, levelId, nodeId, value) => {
-  console.log('lvl: ' + levelId + ' nod: ' + nodeId + ' for: ' + value)
   return state.nodes.map((level, levelIndex) => (
     levelId === levelIndex
       ? level.map((node, nodeIndex) => (
