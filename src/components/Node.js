@@ -8,8 +8,6 @@ class Node extends React.Component {
     this.state = {
       locked: false
     }
-    this.doubleClick = this.doubleClick.bind(this)
-    this.click = this.click.bind(this)
   }
 
   render () {
@@ -24,7 +22,7 @@ class Node extends React.Component {
           onClick={this.props.onClick}
           // using onWheel() here, because in addition to onDoubleClick onClick fires twice
           // P.S. dear EsLint, sorry for prompt
-          onWheel={this.props.onDoubleClick(Number(prompt('Please input new weight', 1)))}
+          onWheel={() => this.props.onDoubleClick(Number(prompt('Please input new weight', 1)))}
         />
         <Text
           x={this.props.constants.nodeDifferenceX / 2 - this.props.constants.nodeRadius}

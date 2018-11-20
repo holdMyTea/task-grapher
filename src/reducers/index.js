@@ -124,7 +124,6 @@ const setNodeClicked = (state, levelId, nodeId, value) => {
 }
 
 const setNodeWeight = (state, levelId, nodeId, newWeight) => {
-  console.log('SOOQA')
   return state.nodes.map((level, levelIndex) => (
     levelId === levelIndex
       ? level.map((node, nodeIndex) => (
