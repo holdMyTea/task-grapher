@@ -14,7 +14,8 @@ const ArrowMap = ({ connections, constants }) => {
           constants.applyOddLevelXShift(connection.to.levelId), // x2
         (connection.to.levelId + 0.5) * constants.levelDifferenceY // y2
       ]} key={`arr-${index}`}
-      stroke='black' strokeWidth={3} />
+      stroke='black' strokeWidth={3}
+      lineCap='round' lineJoin='round' />
   ))
 }
 

@@ -4,9 +4,9 @@ import PropTypes from 'prop-types'
 import { Stage, Layer, Group, Rect } from 'react-konva'
 
 import { addNode, addLevel, clickNode, changeWeight } from '../actions'
-import Level from '../components/Level'
-import PlusSign from '../components/PlusSign'
-import ArrowMap from '../components/Arrows'
+import Level from '../components/board/Level'
+import PlusSign from '../components/board/PlusSign'
+import ArrowMap from '../components/board/Arrows'
 
 class Board extends React.Component {
   constructor () {
@@ -26,7 +26,7 @@ class Board extends React.Component {
 
   render () {
     return (
-      <Stage width={window.innerWidth} height={window.innerHeight} ref={ref => (this.stageRef = ref)}>
+      <Stage width={1160} height={window.innerHeight} ref={ref => (this.stageRef = ref)}>
         <Layer>
           { this.drawLevelLines() }
           <ArrowMap connections={this.props.connections} constants={this.state.constants} />
