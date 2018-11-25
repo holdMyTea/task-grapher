@@ -5,7 +5,7 @@ import { createStore, applyMiddleware } from 'redux'
 import { createLogger } from 'redux-logger'
 
 import reducer from './reducers'
-import Board from './containers/Board.js'
+import Board from './containers/Board'
 
 const loggerMiddleware = createLogger()
 
@@ -18,7 +18,12 @@ const store = createStore(
 
 render(
   <Provider store={store}>
-    <Board />
+    <div style={{
+      display: 'flex',
+      flexDirection: 'column'
+    }}>
+      <Board />
+    </div>
   </Provider>,
   document.getElementById('app')
 )

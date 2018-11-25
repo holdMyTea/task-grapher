@@ -6,7 +6,7 @@ import { Stage, Layer, Group, Rect } from 'react-konva'
 import { addNode, addLevel, clickNode, changeWeight } from '../actions'
 import Level from '../components/board/Level'
 import PlusSign from '../components/board/PlusSign'
-import ArrowMap from '../components/board/Arrows'
+import Arrows from '../components/board/Arrows'
 
 class Board extends React.Component {
   constructor () {
@@ -26,15 +26,17 @@ class Board extends React.Component {
 
   render () {
     return (
-      <Stage width={1160} height={window.innerHeight} ref={ref => (this.stageRef = ref)}>
-        <Layer>
-          { this.drawLevelLines() }
-          <ArrowMap connections={this.props.connections} constants={this.state.constants} />
-          { this.drawNodes() }
-          <PlusSign offsetX={480} offsetY={this.props.nodes.length * 100 + 20}
-            onClick={this.props.onAddLevel}/>
-        </Layer>
-      </Stage>
+      <div>
+        <Stage width={1160} height={window.innerHeight} ref={ref => (this.stageRef = ref)}>
+          <Layer>
+            { this.drawLevelLines() }
+            <Arrows connections={this.filterConnections()} constants={this.state.constants} />
+            { this.drawNodes() }
+            <PlusSign offsetX={480} offsetY={this.props.nodes.length * 100 + 20}
+              onClick={this.props.onAddLevel}/>
+          </Layer>
+        </Stage>
+      </div>
     )
   }
 
@@ -63,6 +65,10 @@ class Board extends React.Component {
         onNodeDoubleClick={(nodeId, newWeight) => this.props.onNodeDoubleClick(index, nodeId, newWeight)} />
     ))
   }
+
+  filterConnections () {
+    return this.props.nodes.flat().filter(node => node.to === undefined || node.to.length > 0)
+  }
 }
 
 const mapStateToProps = state => {
@@ -83,21 +89,21 @@ Board.propTypes = {
     PropTypes.arrayOf(
       PropTypes.shape({
         weight: PropTypes.number,
-        clicked: PropTypes.bool
+        clicked: PropTypes.bool,
+        from: PropTypes.arrayOf(
+          PropTypes.shape({
+            levelId: PropTypes.number,
+            nodeId: PropTypes.number
+          })
+        ),
+        to: PropTypes.arrayOf(
+          PropTypes.shape({
+            levelId: PropTypes.number,
+            nodeId: PropTypes.number
+          })
+        )
       })
     )
-  ),
-  connections: PropTypes.arrayOf(
-    PropTypes.shape({
-      from: PropTypes.shape({
-        levelId: PropTypes.number,
-        nodeId: PropTypes.number
-      }),
-      to: PropTypes.shape({
-        levelId: PropTypes.number,
-        nodeId: PropTypes.number
-      })
-    })
   ),
   onAddNode: PropTypes.func.isRequired,
   onAddLevel: PropTypes.func.isRequired,

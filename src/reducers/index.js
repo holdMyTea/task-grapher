@@ -1,23 +1,23 @@
 import { ADD_NODE, ADD_LEVEL, CLICK_NODE, CHANGE_WEIGHT } from '../actions'
 
-const blankNode = () => ({
+const blankNode = (levelId, nodeId = 0) => ({
   weight: 1,
-  clicked: false
+  levelId,
+  nodeId,
+  clicked: false,
+  from: [],
+  to: []
 })
+
+const initialNodes = addConnection(
+  [[blankNode(0)], [blankNode(1)]],
+  {nodeId: 0, levelId: 0},
+  {nodeId: 0, levelId: 1}
+)
 
 export default function (
   state = {
-    nodes: [[blankNode()], [blankNode()]],
-    connections: [{
-      from: {
-        levelId: 0,
-        nodeId: 0
-      },
-      to: {
-        levelId: 1,
-        nodeId: 0
-      }
-    }],
+    nodes: initialNodes,
     clicked: undefined
   }, action
 ) {
@@ -27,7 +27,8 @@ export default function (
         ...state,
         nodes: state.nodes.map((level, index) => (
           action.levelId === index
-            ? [...state.nodes[action.levelId]].concat([blankNode()])
+            ? [...state.nodes[action.levelId]]
+              .concat([blankNode(action.levelId, state.nodes[action.levelId].length)])
             : level
         ))
       }
@@ -35,13 +36,13 @@ export default function (
     case ADD_LEVEL:
       return {
         ...state,
-        nodes: [...state.nodes, [blankNode()]]
+        nodes: [...state.nodes, [blankNode(state.nodes.length)]]
       }
 
     case CHANGE_WEIGHT:
       return {
         ...state,
-        nodes: setNodeWeight(state, action.levelId, action.nodeId, action.newWeight)
+        nodes: updateNode(state, action.levelId, action.nodeId, {weight: action.newWeight})
       }
 
     case CLICK_NODE:
@@ -60,7 +61,7 @@ const handleFirstClick = (state, action) => {
       levelId: action.levelId,
       nodeId: action.nodeId
     },
-    nodes: setNodeClicked(state, action.levelId, action.nodeId, true)
+    nodes: updateNode(state.nodes, action.levelId, action.nodeId, {clicked: true})
   }
 }
 
@@ -71,64 +72,71 @@ const handleSecondClick = (state, action) => {
     nodeId: action.nodeId
   }
 
-  if (first.levelId >= second.levelId) {
+  if (first.levelId >= second.levelId) { // if the second clicked node is the same or lower level than the first one, return and remove click. This prevents loop creation
     console.log('Only the levels below!!1')
     return {
       ...state,
       clicked: undefined,
-      nodes: setNodeClicked(state, first.levelId, first.nodeId, false)
+      nodes: updateNode(state.nodes, first.levelId, first.nodeId, {clicked: false})
     }
   } else {
-    if (state.connections.find(element => {
-      return (element.from.levelId === first.levelId) &&
-        (element.from.nodeId === first.nodeId) &&
-        (element.to.levelId === second.levelId) &&
-        (element.to.nodeId === second.nodeId)
+    if (state.nodes[first.levelId][first.nodeId].to.find(element => { // if there's already a connection between the two nodes, just return and remove clicked
+      return (element.levelId === second.levelId) &&
+        (element.nodeId === second.nodeId)
     })) {
       return {
         ...state,
         clicked: undefined,
-        nodes: setNodeClicked(state, first.levelId, first.nodeId, false)
+        nodes: updateNode(state.nodes, first.levelId, first.nodeId, {clicked: false})
       }
     } else {
       return {
         ...state,
         clicked: undefined,
-        nodes: setNodeClicked(state, first.levelId, first.nodeId, false),
-        connections: [...state.connections, {
-          from: first,
-          to: second
-        }]
+        nodes: addConnection(state.nodes, first, second)
       }
     }
   }
 }
 
-/** @function setNodeClicked - sets Node's Clicked value and returns updated state.nodes Object
- * @param {Object} state current store's state
- * @param {Number} levelId levelId of chosen Node
- * @param {Number} nodeId nodeId on level of chosen Node
- * @param {Boolean} value desired Clicked value
- * @returns {Object} updated state.nodes Object for state
+/** @function addConnection connects two nodes
+ * @returns {Object} updated state.nodes Object
+ * @param {Object} nodes current nodes matrix to build an updated one from
+ * @param {Object} first the node from higher level being conncted
+ * @param {Object} second the node from lower level being conncted
  */
-const setNodeClicked = (state, levelId, nodeId, value) => {
-  return state.nodes.map((level, levelIndex) => (
-    levelId === levelIndex
-      ? level.map((node, nodeIndex) => (
-        nodeId === nodeIndex
-          ? {...state.nodes[levelIndex][nodeIndex], clicked: value}
-          : node
-      ))
-      : level
-  ))
+function addConnection (nodes, first, second) {
+  const newFirst = {...nodes[first.levelId][first.nodeId]}
+  newFirst.to.push(second)
+  newFirst.clicked = false
+
+  const newSecond = {...nodes[second.levelId][second.nodeId]}
+  newSecond.from.push(first)
+
+  const firstLevel = nodes[first.levelId]
+  firstLevel[first.nodeId] = newFirst
+
+  const secondLevel = nodes[second.levelId]
+  secondLevel[second.nodeId] = newSecond
+
+  nodes[first.levelId] = firstLevel
+  nodes[second.levelId] = secondLevel
+  return nodes
 }
 
-const setNodeWeight = (state, levelId, nodeId, newWeight) => {
-  return state.nodes.map((level, levelIndex) => (
+/** @function updateNode sets Node's params
+ * @returns {Object} updated state.nodes Object
+ * @param {Object} nodes current nodes matrix to build an updated one from
+ * @param {Number} levelId levelId of chosen Node
+ * @param {Number} nodeId nodeId on level of chosen Node
+ * @param {Object} newValue desired value of Node
+ */
+const updateNode = (nodes, levelId, nodeId, newValue) => {
+  return nodes.map((level, levelIndex) => (
     levelId === levelIndex
       ? level.map((node, nodeIndex) => (
         nodeId === nodeIndex
-          ? {...state.nodes[levelIndex][nodeIndex], weight: newWeight}
+          ? {...nodes[levelIndex][nodeIndex], ...newValue}
           : node
       ))
       : level

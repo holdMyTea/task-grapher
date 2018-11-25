@@ -3,18 +3,22 @@ import { connect } from 'react-redux'
 import PropTypes from 'prop-types'
 
 class Results extends React.Component {
+  constructor (props) {
+    super(props)
+    this.state = {
+      text: ''
+    }
+  }
+
   render () {
-    return null
-  }
-
-  calculate () {
-    const arr = this.props.nodes.flat(2).map((node, index, array) => {
-      console.log('log')
-    })
-  }
-
-  criticalDistanceFromStart () {
-    
+    return (
+      <div>
+        <button onClick={() => this.setState({
+          text: normalizeData(this.props.nodes, this.props.connections)
+        })}>Ebosh</button>
+        <p>{this.state.text}</p>
+      </div>
+    )
   }
 }
 
