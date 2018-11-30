@@ -2,6 +2,8 @@ import React from 'react'
 import { connect } from 'react-redux'
 import PropTypes from 'prop-types'
 
+import { calculateTask8 } from '../calcualtions'
+
 class Results extends React.Component {
   constructor (props) {
     super(props)
@@ -11,10 +13,11 @@ class Results extends React.Component {
   }
 
   render () {
+    console.log(this.state.text)
     return (
-      <div>
+      <div width={100}>
         <button onClick={() => this.setState({
-          text: normalizeData(this.props.nodes, this.props.connections)
+          text: String(calculateTask8(this.props.nodes))
         })}>Ebosh</button>
         <p>{this.state.text}</p>
       </div>

@@ -6,6 +6,7 @@ import { createLogger } from 'redux-logger'
 
 import reducer from './reducers'
 import Board from './containers/Board'
+import Results from './containers/Results'
 
 const loggerMiddleware = createLogger()
 
@@ -23,6 +24,7 @@ render(
       flexDirection: 'column'
     }}>
       <Board />
+      <Results />
     </div>
   </Provider>,
   document.getElementById('app')

@@ -26,7 +26,7 @@ class Board extends React.Component {
 
   render () {
     return (
-      <div>
+      <div width={1200}>
         <Stage width={1160} height={window.innerHeight} ref={ref => (this.stageRef = ref)}>
           <Layer>
             { this.drawLevelLines() }
