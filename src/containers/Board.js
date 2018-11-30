@@ -59,7 +59,6 @@ class Board extends React.Component {
     return this.props.nodes.map((level, index, array) => (
       <Level nodes={level} index={index} key={`lvl-${index}`}
         constants={this.state.constants}
-        nodeCountOffset={index === 0 ? 1 : array.slice(0, index).flat().length + 1}
         onPlusClick={() => this.props.onAddNode(index)}
         onNodeClick={(nodeId) => this.props.onNodeClick(index, nodeId)}
         onNodeDoubleClick={(nodeId, newWeight) => this.props.onNodeDoubleClick(index, nodeId, newWeight)} />
@@ -90,6 +89,7 @@ Board.propTypes = {
       PropTypes.shape({
         weight: PropTypes.number,
         clicked: PropTypes.bool,
+        globalIndex: PropTypes.number,
         from: PropTypes.arrayOf(
           PropTypes.shape({
             levelId: PropTypes.number,

@@ -9,11 +9,11 @@ const blankNode = (levelId, nodeId = 0) => ({
   to: []
 })
 
-const initialNodes = addConnection(
+const initialNodes = updateGlobalIndex(addConnection(
   [[blankNode(0)], [blankNode(1)]],
   {nodeId: 0, levelId: 0},
   {nodeId: 0, levelId: 1}
-)
+))
 
 export default function (
   state = {
@@ -23,26 +23,27 @@ export default function (
 ) {
   switch (action.type) {
     case ADD_NODE:
+      const newNodes = state.nodes.map((level, index) => (
+        action.levelId === index
+          ? [...state.nodes[action.levelId]].concat([blankNode(action.levelId, state.nodes[action.levelId].length)])
+          : level
+      ))
       return {
         ...state,
-        nodes: state.nodes.map((level, index) => (
-          action.levelId === index
-            ? [...state.nodes[action.levelId]]
-              .concat([blankNode(action.levelId, state.nodes[action.levelId].length)])
-            : level
-        ))
+        nodes: updateGlobalIndex(newNodes)
       }
 
     case ADD_LEVEL:
+      const addedLevelNodes = [...state.nodes, [blankNode(state.nodes.length)]]
       return {
         ...state,
-        nodes: [...state.nodes, [blankNode(state.nodes.length)]]
+        nodes: updateGlobalIndex(addedLevelNodes)
       }
 
     case CHANGE_WEIGHT:
       return {
         ...state,
-        nodes: updateNode(state, action.levelId, action.nodeId, {weight: action.newWeight})
+        nodes: updateNode(state.nodes, action.levelId, action.nodeId, {weight: action.newWeight})
       }
 
     case CLICK_NODE:
@@ -52,6 +53,17 @@ export default function (
 
     default: return state
   }
+}
+
+function updateGlobalIndex (nodes) {
+  return nodes.map((level, levelIndex) =>
+    level.map((node, nodeIndex) => ({
+      ...node,
+      globalIndex: levelIndex === 0
+        ? nodeIndex + 1
+        : (nodes.slice(0, levelIndex).flat().length) + nodeIndex + 1
+    }))
+  )
 }
 
 const handleFirstClick = (state, action) => {

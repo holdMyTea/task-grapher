@@ -5,7 +5,7 @@ import { Group } from 'react-konva'
 import Node from './Node'
 import PlusSign from './PlusSign'
 
-const Level = ({nodes, index, constants, nodeCountOffset, onPlusClick, onNodeClick, onNodeDoubleClick}) => {
+const Level = ({nodes, index, constants, onPlusClick, onNodeClick, onNodeDoubleClick}) => {
   return (
     <Group x={0 + constants.applyOddLevelXShift(index)} y={0 + index * constants.levelDifferenceY}
       height={constants.levelDifferenceY} width={1100}>
@@ -14,7 +14,7 @@ const Level = ({nodes, index, constants, nodeCountOffset, onPlusClick, onNodeCli
           nodes.map((node, nodeIndex) => (
             <Node weight={node.weight} clicked={node.clicked} nodeIndex={nodeIndex}
               constants={constants}
-              count={nodeCountOffset + nodeIndex}
+              count={node.globalIndex}
               key={`nd-${index * 10 + nodeIndex}`}
               onClick={() => onNodeClick(nodeIndex)}
               onDoubleClick={(newWeight) => onNodeDoubleClick(nodeIndex, newWeight)} />
@@ -30,7 +30,8 @@ Level.propTypes = {
   nodes: PropTypes.arrayOf(
     PropTypes.shape({
       weight: PropTypes.number,
-      clicked: PropTypes.bool
+      clicked: PropTypes.bool,
+      globalIndex: PropTypes.number
     })
   ),
   index: PropTypes.number.isRequired,
@@ -41,7 +42,6 @@ Level.propTypes = {
     nodeWeightTextSize: PropTypes.number,
     applyOddLevelXShift: PropTypes.func
   }),
-  nodeCountOffset: PropTypes.number.isRequired,
   onPlusClick: PropTypes.func.isRequired,
   onNodeClick: PropTypes.func.isRequired,
   onNodeDoubleClick: PropTypes.func.isRequired
